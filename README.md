@@ -1,4 +1,26 @@
-# vinext-starter
+# Wedding Invitation · 다연 ♥ 재훈
+
+## GitHub Pages
+
+Public URL: https://chanstonee.github.io/chans2-wedding/
+
+The `.github/workflows/pages.yml` workflow builds and deploys the static site on
+every push to `main`. Repository Settings → Pages → Source must be **GitHub Actions**.
+
+```bash
+npm ci
+npm run build:pages
+```
+
+The export is written to `out/`, with repository-prefixed image/font paths and
+`.nojekyll`. Override `PAGES_BASE_PATH` if the repository name changes (use an
+empty value for a custom domain). Splash, menu navigation, gallery and modals
+run entirely in the browser. The auto-filled password is an animation, not access control.
+
+The existing `npm run dev` and `npm run build` commands still use the original
+Sites/Vinext setup; GitHub Pages does not need Cloudflare, D1, or a server.
+
+## Original starter notes
 
 A clean full-stack starter running on
 [vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and
