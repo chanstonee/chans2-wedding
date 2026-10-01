@@ -288,8 +288,8 @@ export default function Home() {
         <nav className="home-bottom-nav glass-card" aria-label="빠른 메뉴">
           <GlassLayers />
           <button className="glass-content" onClick={() => navigate("alert")}><span className="material-symbols-rounded" aria-hidden>mail</span><span>RSVP</span></button>
-          <button className="glass-content" onClick={() => setInfoOpen(true)}><span className="material-symbols-rounded" aria-hidden>info</span><span>안내</span></button>
           <button className="glass-content" onClick={() => setMenuOpen(true)}><span className="material-symbols-rounded" aria-hidden>grid_view</span><span>전체메뉴</span></button>
+          <button className="glass-content" onClick={() => setInfoOpen(true)}><span className="material-symbols-rounded" aria-hidden>info</span><span>안내</span></button>
         </nav>
       )}
 
