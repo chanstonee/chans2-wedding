@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const pagesBuild = process.env.PAGES_BUILD === "1";
-const pagesBasePath = (process.env.PAGES_BASE_PATH ?? "/chans2-wedding").replace(/\/$/, "");
+const pagesBasePath = (process.env.PAGES_BASE_PATH ?? "/wedding").replace(/\/$/, "");
 
 const nextConfig: NextConfig = pagesBuild
   ? {

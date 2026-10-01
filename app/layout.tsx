@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 const publicBasePath = process.env.PAGES_BUILD === "1"
-  ? (process.env.PAGES_BASE_PATH ?? "/chans2-wedding").replace(/\/$/, "")
+  ? (process.env.PAGES_BASE_PATH ?? "/wedding").replace(/\/$/, "")
   : "";
 
 export const metadata: Metadata = {

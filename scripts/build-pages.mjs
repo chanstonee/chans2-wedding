@@ -3,9 +3,9 @@ import { readdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
 // Keep the existing Sites build unchanged. Pages exports the same app without a server.
-const basePath = (process.env.PAGES_BASE_PATH ?? "/chans2-wedding").replace(/\/$/, "");
+const basePath = (process.env.PAGES_BASE_PATH ?? "/wedding").replace(/\/$/, "");
 if (basePath && !/^\/[a-zA-Z0-9_-]+$/.test(basePath)) {
-  throw new Error("PAGES_BASE_PATH must be empty or a single repository path, e.g. /chans2-wedding");
+  throw new Error("PAGES_BASE_PATH must be empty or a single repository path, e.g. /wedding");
 }
 const result = spawnSync(process.execPath, ["node_modules/next/dist/bin/next", "build", "--webpack"], {
   stdio: "inherit",

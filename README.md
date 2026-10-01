@@ -2,7 +2,7 @@
 
 ## GitHub Pages
 
-Public URL: https://chanstonee.github.io/chans2-wedding/
+Public URL: https://chanstonee.github.io/wedding/
 
 The `.github/workflows/pages.yml` workflow builds and deploys the static site on
 every push to `main`. Repository Settings → Pages → Source must be **GitHub Actions**.
