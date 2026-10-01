@@ -1,4 +1,4 @@
-# Wedding Invitation · 다연 ♥ 재훈
+# wedding invitaion
 
 ## GitHub Pages
 

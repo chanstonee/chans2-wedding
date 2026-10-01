@@ -53,7 +53,7 @@ function Header({ page, navigate, openInfo }: { page: PageKey; navigate: (page: 
       <button className={`header-back ${isHome ? "hidden" : ""}`} onClick={() => navigate("home")} aria-label="홈으로 돌아가기">
         <span aria-hidden>←</span> Back
       </button>
-      <button className="app-brand" onClick={() => navigate("home")}>Wedding Invitaion</button>
+      <button className="app-brand" onClick={() => navigate("home")}>wedding invitaion</button>
       <button className="header-info" onClick={(event) => { event.currentTarget.blur(); openInfo(); }} aria-label="예식 안내 팝업 열기" aria-haspopup="dialog">
         Info <span aria-hidden>ⓘ</span>
       </button>
@@ -106,7 +106,7 @@ function SplashGate({ step, password, onEnter }: { step: SplashStep; password: s
       <div className={`splash-stage splash-entry ${step === 3 ? "is-active" : ""}`} aria-hidden={step !== 3}>
         <div className="splash-mark">
           <img src="/assets/doodle-message.png" alt="" />
-          <h1>Wedding Invitation</h1>
+          <h1>wedding invitaion</h1>
         </div>
         <form className="splash-password-form" onSubmit={(event) => { event.preventDefault(); if (passwordReady) onEnter(); }}>
           <input
@@ -250,7 +250,7 @@ export default function Home() {
           <button className="home-logo glass-content" onClick={() => navigate("story")} aria-label="우리 이야기 보기">
             <img src="/assets/doodle-message.png" alt="" />
           </button>
-          <span className="home-header-title glass-content">Wedding Invitation</span>
+          <span className="home-header-title glass-content">wedding invitaion</span>
           <button className="home-menu-trigger glass-content" onClick={() => setMenuOpen(true)} aria-label="전체 메뉴 열기" aria-expanded={menuOpen}>
             <span className="material-symbols-rounded" aria-hidden>menu</span>
           </button>
@@ -392,7 +392,7 @@ export default function Home() {
           <section className="home-menu-panel glass-card" role="dialog" aria-modal="true" aria-label="전체 메뉴">
             <GlassLayers />
             <div className="home-menu-heading">
-              <div><small>WEDDING INVITATION</small><strong>다연 ♥ 재훈</strong></div>
+              <div><small>wedding invitaion</small><strong>다연 ♥ 재훈</strong></div>
               <button onClick={() => setMenuOpen(false)} aria-label="전체 메뉴 닫기"><span className="material-symbols-rounded" aria-hidden>close</span></button>
             </div>
             <div className="home-menu-grid">
