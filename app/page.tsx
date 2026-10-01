@@ -354,7 +354,7 @@ export default function Home() {
         <div className="center-detail">
           <ScreenTitle image="/assets/doodle-alert.png" title="SAVE THE DATE" />
           <div className="notice-card">
-            <h2 className="event-date">2027. 05. 15 PM 06:30</h2>
+            <h2 className="event-date"><span>2027. 05. 15</span>{" "}<span>PM 06:30</span></h2>
             <p>First Garden · Paju, Korea</p>
             <hr />
             <p>따뜻한 축복으로 함께해 주세요.</p>
@@ -420,7 +420,7 @@ export default function Home() {
               <h2 id="info-modal-title">SAVE THE DATE</h2>
             </div>
             <div className="notice-card info-card">
-              <h2 className="event-date">2027. 05. 15 PM 06:30</h2>
+              <h2 className="event-date"><span>2027. 05. 15</span>{" "}<span>PM 06:30</span></h2>
               <p>First Garden · Paju, Korea</p>
               <hr />
               <p>따뜻한 축복으로 함께해 주세요.</p>
