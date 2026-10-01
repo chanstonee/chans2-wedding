@@ -88,6 +88,7 @@ img { display:block; max-width:100%; }
 .home-quick-card:hover { transform:translateY(-3px); }
 .home-quick-card:focus-visible { outline:2px solid #b98289; outline-offset:3px; }
 .home-quick-label { display:flex; align-items:center; justify-content:center; gap:5px; font-size:var(--text-label); font-weight:600; line-height:var(--leading-label); color:#574849; white-space:nowrap; }
+.home-quick-card:not(.home-secondary-card) .home-quick-label { margin-right:2px; }
 .home-quick-label .material-symbols-rounded { font-size:21px; color:#c9838d; }
 .home-quick-art { width:100%; height:104px; display:grid; place-items:center; }
 .home-quick-art img { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; }
