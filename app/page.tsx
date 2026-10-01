@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState, type PointerEventHandler } from "react";
+import { useEffect, useRef, useState, type PointerEventHandler, type ReactNode } from "react";
 
 type PageKey = "home" | "story" | "location" | "alert" | "gallery" | "dinner" | "thanks";
+type PanelKey = Exclude<PageKey, "home"> | "menu";
 type SplashStep = 1 | 2 | 3;
 
 const pageKeys: PageKey[] = ["home", "story", "location", "alert", "gallery", "dinner", "thanks"];
@@ -11,15 +12,6 @@ const splashPassword = "20270515";
 const naverMapUrl = "https://naver.me/G6Rqydqw";
 const mapPreviewUrl = "https://www.openstreetmap.org/export/embed.html?bbox=126.7891923%2C37.7266412%2C126.7991923%2C37.7366412&layer=mapnik&marker=37.7316412%2C126.7941923";
 const naverDirectionsUrl = "https://map.naver.com/p/directions/-/3z9Y9h,2AT075,%EA%B2%BD%EA%B8%B0%20%ED%8C%8C%EC%A3%BC%EC%8B%9C%20%ED%83%91%EC%82%AD%EA%B3%A8%EA%B8%B8%20260,,ADDRESS_POI/-/car?c=16.44,0,0,0,dh";
-
-const iconItems: Array<{ label: string; image: string; page: PageKey }> = [
-  { label: "Story", image: "/assets/doodle-message.png", page: "story" },
-  { label: "Adress", image: "/assets/doodle-map.png", page: "location" },
-  { label: "Alert", image: "/assets/doodle-alert.png", page: "alert" },
-  { label: "Gallery", image: "/assets/doodle-picture.png", page: "gallery" },
-  { label: "Dinner", image: "/assets/doodle-dinner.png", page: "dinner" },
-  { label: "Thanks to", image: "/assets/doodle-thanks.png", page: "thanks" },
-];
 
 const homeQuickLinks: Array<{ label: string; image: string; page: PageKey; symbol?: string }> = [
   { label: "오시는 길", image: "/assets/doodle-location.png", page: "location", symbol: "location_on" },
@@ -45,31 +37,117 @@ const galleryTabs = [
   { label: "Individual", icon: "/assets/doodle-call.png" },
 ];
 
-function Header({ page, navigate, openInfo }: { page: PageKey; navigate: (page: PageKey) => void; openInfo: () => void }) {
-  const isHome = page === "home";
+const panelDetails: Record<PanelKey, { label: string; title: string; image?: string }> = {
+  alert: { label: "예식 날짜", title: "SAVE THE DATE", image: "/assets/doodle-alert.png" },
+  dinner: { label: "식사 안내", title: "DINNER", image: "/assets/doodle-dinner.png" },
+  story: { label: "두 사람의 이야기", title: "OUR STORY", image: "/assets/doodle-message.png" },
+  thanks: { label: "감사의 마음", title: "THANKS TO", image: "/assets/doodle-thanks.png" },
+  location: { label: "오시는 길", title: "오시는 길" },
+  gallery: { label: "사진첩", title: "사진첩" },
+  menu: { label: "전체메뉴", title: "전체메뉴" },
+};
+
+const focusableSelector = 'button:not([disabled]), a[href], input:not([disabled]), iframe, [tabindex]:not([tabindex="-1"])';
+
+function trapDialogFocus(event: KeyboardEvent, dialog: HTMLElement) {
+  if (event.key !== "Tab") return;
+  const controls = Array.from(dialog.querySelectorAll<HTMLElement>(focusableSelector)).filter((element) => element.getClientRects().length > 0);
+  const first = controls[0];
+  const last = controls[controls.length - 1];
+  if (!first) { event.preventDefault(); dialog.focus(); return; }
+  if (event.shiftKey && (document.activeElement === first || !dialog.contains(document.activeElement))) {
+    event.preventDefault(); last.focus();
+  } else if (!event.shiftKey && (document.activeElement === last || !dialog.contains(document.activeElement))) {
+    event.preventDefault(); first.focus();
+  }
+}
+
+function PanelDialog({ panel, onClose, suspended, children }: { panel: PanelKey; onClose: () => void; suspended: boolean; children: ReactNode }) {
+  const dialogRef = useRef<HTMLElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const dragStart = useRef<number | null>(null);
+  const [dragOffset, setDragOffset] = useState(0);
+  const [dragging, setDragging] = useState(false);
+  const isSheet = panel === "location" || panel === "gallery" || panel === "menu";
+  const details = panelDetails[panel];
+
+  useEffect(() => { setDragOffset(0); closeRef.current?.focus({ preventScroll: true }); }, [panel]);
+  useEffect(() => {
+    if (suspended) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") { event.preventDefault(); onClose(); }
+      else if (dialogRef.current) trapDialogFocus(event, dialogRef.current);
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [onClose, suspended]);
+
+  const startDrag: PointerEventHandler<HTMLDivElement> = (event) => {
+    if (!isSheet || !window.matchMedia("(max-width: 700px)").matches || (event.target as HTMLElement).closest("button")) return;
+    dragStart.current = event.clientY;
+    event.currentTarget.setPointerCapture(event.pointerId);
+    setDragging(true);
+  };
+  const moveDrag: PointerEventHandler<HTMLDivElement> = (event) => {
+    if (dragStart.current !== null) setDragOffset(Math.max(0, event.clientY - dragStart.current));
+  };
+  const endDrag: PointerEventHandler<HTMLDivElement> = (event) => {
+    const distance = dragStart.current === null ? 0 : event.clientY - dragStart.current;
+    dragStart.current = null;
+    setDragging(false);
+    setDragOffset(0);
+    if (distance > 80 && event.type !== "pointercancel") onClose();
+  };
 
   return (
-    <header className="app-header">
-      <button className={`header-back ${isHome ? "hidden" : ""}`} onClick={() => navigate("home")} aria-label="홈으로 돌아가기">
-        <span aria-hidden>←</span> Back
-      </button>
-      <button className="app-brand" onClick={() => navigate("home")}>wedding invitaion</button>
-      <button className="header-info" onClick={(event) => { event.currentTarget.blur(); openInfo(); }} aria-label="예식 안내 팝업 열기" aria-haspopup="dialog">
-        Info <span aria-hidden>ⓘ</span>
-      </button>
-    </header>
+    <div className={`panel-backdrop ${isSheet ? "sheet-backdrop" : "modal-backdrop"}`} onClick={(event) => event.target === event.currentTarget && !suspended && onClose()}>
+      <section ref={dialogRef} className={`hybrid-dialog panel-${panel} ${isSheet ? "sheet-dialog" : "info-modal"} ${dragging ? "is-dragging" : ""}`} role="dialog" aria-modal="true" aria-labelledby="panel-title" tabIndex={-1} inert={suspended} aria-hidden={suspended || undefined} style={isSheet ? { transform: `translateY(${dragOffset}px)` } : undefined}>
+        {isSheet ? (
+          <div className="sheet-heading" onPointerDown={startDrag} onPointerMove={moveDrag} onPointerUp={endDrag} onPointerCancel={endDrag}>
+            <span className="sheet-handle" aria-hidden />
+            <h2 id="panel-title">{details.title}</h2>
+            <button ref={closeRef} className="panel-close" onClick={onClose} aria-label={`${details.label} 닫기`}><img src="/assets/close-circle2-filled.svg" alt="" /></button>
+          </div>
+        ) : (
+          <>
+            <img className="info-float-icon" src={details.image} alt="" />
+            <button ref={closeRef} className="info-close" onClick={onClose} aria-label={`${details.label} 닫기`}><img src="/assets/close-circle2-filled.svg" alt="" /></button>
+          </>
+        )}
+        <div className="panel-scroll">
+          {!isSheet && <div className="title-frame info-title-frame"><img src="/assets/title-frame.png" alt="" /><h2 id="panel-title">{details.title}</h2></div>}
+          {children}
+        </div>
+      </section>
+    </div>
   );
 }
 
-function ScreenTitle({ image, title }: { image: string; title: string }) {
+function PhotoViewer({ index, onClose, onChange, returnFocus }: { index: number; onClose: () => void; onChange: (index: number) => void; returnFocus: HTMLElement | null }) {
+  const viewerRef = useRef<HTMLElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    closeRef.current?.focus();
+    return () => returnFocus?.focus({ preventScroll: true });
+  }, [returnFocus]);
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") { event.preventDefault(); onClose(); }
+      else if (event.key === "ArrowLeft") onChange((index + galleryImages.length - 1) % galleryImages.length);
+      else if (event.key === "ArrowRight") onChange((index + 1) % galleryImages.length);
+      else if (viewerRef.current) trapDialogFocus(event, viewerRef.current);
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [index, onClose, onChange]);
   return (
-    <div className="screen-title">
-      <img className="screen-icon" src={image} alt="" />
-      <div className="title-frame">
-        <img src="/assets/title-frame.png" alt="" />
-        <h1>{title}</h1>
-      </div>
-    </div>
+    <section ref={viewerRef} className="photo-viewer" role="dialog" aria-modal="true" aria-label={`웨딩 사진 ${index + 1} 크게 보기`} onClick={(event) => event.target === event.currentTarget && onClose()}>
+      <button ref={closeRef} className="photo-viewer-close" onClick={onClose} aria-label="사진 닫기"><span className="material-symbols-rounded" aria-hidden>close</span></button>
+      <img src={galleryImages[index]} alt={`웨딩 사진 ${index + 1}`} />
+      <button className="photo-viewer-prev" onClick={() => onChange((index + galleryImages.length - 1) % galleryImages.length)} aria-label="이전 사진"><span className="material-symbols-rounded" aria-hidden>chevron_left</span></button>
+      <button className="photo-viewer-next" onClick={() => onChange((index + 1) % galleryImages.length)} aria-label="다음 사진"><span className="material-symbols-rounded" aria-hidden>chevron_right</span></button>
+      <span className="photo-viewer-count" aria-live="polite">{index + 1} / {galleryImages.length}</span>
+    </section>
   );
 }
 
@@ -127,14 +205,16 @@ function SplashGate({ step, password, onEnter }: { step: SplashStep; password: s
 }
 
 export default function Home() {
-  const [page, setPage] = useState<PageKey>("home");
+  const [panel, setPanel] = useState<PanelKey | null>(null);
   const [galleryTab, setGalleryTab] = useState("Ceremony");
-  const [infoOpen, setInfoOpen] = useState(false);
+  const [photoIndex, setPhotoIndex] = useState<number | null>(null);
   const [splashStep, setSplashStep] = useState<SplashStep>(1);
   const [autoPassword, setAutoPassword] = useState("");
   const [splashComplete, setSplashComplete] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
   const activeGlassRef = useRef<HTMLElement | null>(null);
+  const openerRef = useRef<HTMLElement | null>(null);
+  const photoOpenerRef = useRef<HTMLElement | null>(null);
+  const homeScrollRef = useRef<HTMLElement>(null);
 
   const resetGlassPointer = () => {
     activeGlassRef.current?.style.removeProperty("--glass-x");
@@ -194,42 +274,76 @@ export default function Home() {
     return () => window.clearInterval(typingTimer);
   }, [splashStep]);
 
+  const overlayOpen = panel !== null;
   useEffect(() => {
-    if (!infoOpen) return;
-
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setInfoOpen(false);
+    if (!overlayOpen) return;
+    const bodyOverflow = document.body.style.overflow;
+    const rootOverflow = document.documentElement.style.overflow;
+    const homeOverflow = homeScrollRef.current?.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+    if (homeScrollRef.current) homeScrollRef.current.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = bodyOverflow;
+      document.documentElement.style.overflow = rootOverflow;
+      if (homeScrollRef.current) homeScrollRef.current.style.overflow = homeOverflow ?? "";
+      openerRef.current?.focus({ preventScroll: true });
     };
-
-    window.addEventListener("keydown", closeOnEscape);
-    return () => window.removeEventListener("keydown", closeOnEscape);
-  }, [infoOpen]);
+  }, [overlayOpen]);
 
   useEffect(() => {
     if (!splashComplete) return;
 
     const syncFromHash = () => {
-      const hash = window.location.hash.slice(1) as PageKey;
-      setPage(pageKeys.includes(hash) ? hash : "home");
+      const [hash, photoHash] = window.location.hash.slice(1).split("/");
+      const number = Number(photoHash?.match(/^photo-(\d+)$/)?.[1]);
+      setPhotoIndex(hash === "gallery" && number >= 1 && number <= galleryImages.length ? number - 1 : null);
+      setPanel(hash === "menu" || (pageKeys.includes(hash as PageKey) && hash !== "home") ? hash as PanelKey : null);
     };
     syncFromHash();
     window.addEventListener("popstate", syncFromHash);
-    return () => window.removeEventListener("popstate", syncFromHash);
+    window.addEventListener("hashchange", syncFromHash);
+    return () => {
+      window.removeEventListener("popstate", syncFromHash);
+      window.removeEventListener("hashchange", syncFromHash);
+    };
   }, [splashComplete]);
 
   const enterSite = () => {
     if (autoPassword !== splashPassword) return;
-    setPage("home");
     setSplashComplete(true);
-    window.history.replaceState({}, "", window.location.pathname);
   };
 
-  const navigate = (nextPage: PageKey) => {
-    setInfoOpen(false);
-    setMenuOpen(false);
-    setPage(nextPage);
-    const nextHash = nextPage === "home" ? window.location.pathname : `#${nextPage}`;
-    window.history.pushState({}, "", nextHash);
+  const openPanel = (nextPanel: PanelKey) => {
+    if (!panel) openerRef.current = document.activeElement as HTMLElement | null;
+    setPhotoIndex(null);
+    setPanel(nextPanel);
+    // A menu-to-card transition is one overlay visit, so Back returns to the home.
+    const state = { ...window.history.state, weddingOverlay: panel ? window.history.state?.weddingOverlay === true : true, weddingPhoto: false };
+    if (panel) window.history.replaceState(state, "", `#${nextPanel}`);
+    else window.history.pushState(state, "", `#${nextPanel}`);
+  };
+
+  const closePanel = () => {
+    setPhotoIndex(null);
+    setPanel(null);
+    if (window.history.state?.weddingOverlay) window.history.back();
+    else window.history.replaceState(window.history.state, "", window.location.pathname + window.location.search);
+  };
+
+  const openPhoto = (index: number) => {
+    photoOpenerRef.current = document.activeElement as HTMLElement | null;
+    setPhotoIndex(index);
+    window.history.pushState({ ...window.history.state, weddingPhoto: true }, "", `#gallery/photo-${index + 1}`);
+  };
+  const changePhoto = (index: number) => {
+    setPhotoIndex(index);
+    window.history.replaceState(window.history.state, "", `#gallery/photo-${index + 1}`);
+  };
+  const closePhoto = () => {
+    setPhotoIndex(null);
+    if (window.history.state?.weddingPhoto) window.history.back();
+    else window.history.replaceState(window.history.state, "", "#gallery");
   };
 
   return (
@@ -243,20 +357,18 @@ export default function Home() {
         </defs>
       </svg>
       {!splashComplete && <SplashGate step={splashStep} password={autoPassword} onEnter={enterSite} />}
-      <div className="app-scenes" inert={!splashComplete} aria-hidden={!splashComplete}>
-      {page === "home" && (
+      <div className="app-scenes" inert={!splashComplete || overlayOpen} aria-hidden={!splashComplete || overlayOpen}>
         <header className="home-header glass-card">
           <GlassLayers />
-          <button className="home-logo glass-content" onClick={() => navigate("story")} aria-label="우리 이야기 보기">
+          <button className="home-logo glass-content" onClick={() => openPanel("story")} aria-label="우리 이야기 보기" aria-haspopup="dialog">
             <img src="/assets/doodle-message.png" alt="" />
           </button>
           <span className="home-header-title glass-content">wedding invitaion</span>
-          <button className="home-menu-trigger glass-content" onClick={() => setMenuOpen(true)} aria-label="전체 메뉴 열기" aria-expanded={menuOpen}>
+          <button className="home-menu-trigger glass-content" onClick={() => openPanel("menu")} aria-label="전체 메뉴 열기" aria-haspopup="dialog" aria-expanded={panel === "menu"}>
             <span className="material-symbols-rounded" aria-hidden>menu</span>
           </button>
         </header>
-      )}
-      <section className={`app-screen home-screen ${page === "home" ? "active" : ""}`} aria-hidden={page !== "home"}>
+      <section ref={homeScrollRef} className="app-screen home-screen active">
         <div className="home-content">
           <section className="home-hero" aria-labelledby="home-hero-title">
             <p>WE ARE GETTING MARRIED</p>
@@ -270,7 +382,7 @@ export default function Home() {
 
           <section className="home-quick-grid" aria-label="주요 안내">
             {homeQuickLinks.map((item, index) => (
-              <button key={item.page} className={`home-quick-card glass-card ${index > 2 ? "home-secondary-card" : ""}`} onClick={() => navigate(item.page)}>
+              <button key={item.page} className={`home-quick-card glass-card ${index > 2 ? "home-secondary-card" : ""}`} onClick={() => openPanel(item.page as PanelKey)} aria-haspopup="dialog">
                 <GlassLayers />
                 <span className="home-quick-art glass-content">
                   <img className="glass-content" src={item.image} alt="" />
@@ -284,151 +396,45 @@ export default function Home() {
 
       </section>
 
-      {page === "home" && (
         <nav className="home-bottom-nav glass-card" aria-label="빠른 메뉴">
           <GlassLayers />
-          <button className="glass-content" onClick={() => navigate("alert")}><span className="material-symbols-rounded" aria-hidden>mail</span><span>RSVP</span></button>
-          <button className="glass-content" onClick={() => setMenuOpen(true)}><span className="material-symbols-rounded" aria-hidden>grid_view</span><span>전체메뉴</span></button>
-          <button className="glass-content" onClick={() => setInfoOpen(true)}><span className="material-symbols-rounded" aria-hidden>info</span><span>안내</span></button>
+          <button className="glass-content" onClick={() => openPanel("alert")} aria-haspopup="dialog"><span className="material-symbols-rounded" aria-hidden>mail</span><span>RSVP</span></button>
+          <button className="glass-content" onClick={() => openPanel("menu")} aria-haspopup="dialog"><span className="material-symbols-rounded" aria-hidden>grid_view</span><span>전체메뉴</span></button>
+          <button className="glass-content" onClick={() => openPanel("alert")} aria-haspopup="dialog"><span className="material-symbols-rounded" aria-hidden>info</span><span>안내</span></button>
         </nav>
-      )}
 
-      <section className={`app-screen detail-screen story-screen ${page === "story" ? "active" : ""}`} aria-hidden={page !== "story"}>
-        <Header page="story" navigate={navigate} openInfo={() => setInfoOpen(true)} />
-        <div className="center-detail">
-          <ScreenTitle image="/assets/doodle-message.png" title="OUR STORY" />
-          <div className="story-copy">
-            <h2>Two lives,<br />one beautiful beginning.</h2>
-            <p>소중한 분들과 함께 새로운 시작을 나누고 싶습니다.</p>
-            <strong>다연 <i>♥</i> 재훈</strong>
-          </div>
-        </div>
-      </section>
-
-      <section className={`app-screen detail-screen gallery-screen ${page === "gallery" ? "active" : ""}`} aria-hidden={page !== "gallery"}>
-        <Header page="gallery" navigate={navigate} openInfo={() => setInfoOpen(true)} />
-        <div className="gallery-content">
-          <ScreenTitle image="/assets/doodle-picture.png" title="Gallery" />
-          <div className="gallery-tabs" role="tablist" aria-label="갤러리 분류">
-            {galleryTabs.map((tab) => (
-              <button key={tab.label} className={galleryTab === tab.label ? "active" : ""} onClick={() => setGalleryTab(tab.label)} role="tab" aria-selected={galleryTab === tab.label} tabIndex={page === "gallery" ? 0 : -1}>
-                <img src={tab.icon} alt="" aria-hidden />
-                {tab.label}
-              </button>
-            ))}
-          </div>
-          <div className={`gallery-grid tab-${galleryTab.toLowerCase()}`}>
-            {galleryImages.map((src, index) => (
-              <div className={`gallery-photo photo-${index + 1}`} key={`${galleryTab}-${index}`}>
-                <img src={src} alt={`${galleryTab} 웨딩 사진 ${index + 1}`} />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className={`app-screen detail-screen location-screen ${page === "location" ? "active" : ""}`} aria-hidden={page !== "location"}>
-        <Header page="location" navigate={navigate} openInfo={() => setInfoOpen(true)} />
-        <div className="location-content">
-          <ScreenTitle image="/assets/doodle-map.png" title="LOCATION" />
-          <div className="location-layout">
-            <div className="map-card map-preview">
-              <iframe className="map-preview-frame" src={mapPreviewUrl} title="First Garden 위치 지도" loading="lazy" tabIndex={-1} />
-              <a className="map-preview-copy" href={naverMapUrl} target="_blank" rel="noreferrer" aria-label="네이버 지도에서 First Garden 위치 열기">
-                <strong>First Garden</strong>
-                <span>경기도 파주시 탑삭골길 260</span>
-                <em>네이버 지도에서 보기 ↗</em>
-              </a>
-            </div>
-            <div className="location-copy">
-              <h2>First Garden,<br />Paju Korea</h2>
-              <p>경기도 파주시 탑삭골길 260</p>
-              <a href={naverDirectionsUrl} target="_blank" rel="noreferrer">자세히 <span aria-hidden>↗</span></a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className={`app-screen detail-screen notice-screen ${page === "alert" ? "active" : ""}`} aria-hidden={page !== "alert"}>
-        <Header page="alert" navigate={navigate} openInfo={() => setInfoOpen(true)} />
-        <div className="center-detail">
-          <ScreenTitle image="/assets/doodle-alert.png" title="SAVE THE DATE" />
-          <div className="notice-card">
-            <h2 className="event-date"><span>2027. 05. 15</span>{" "}<span>PM 06:30</span></h2>
-            <p>First Garden · Paju, Korea</p>
-            <hr />
-            <p>따뜻한 축복으로 함께해 주세요.</p>
-          </div>
-        </div>
-      </section>
-
-      <section className={`app-screen detail-screen dinner-screen ${page === "dinner" ? "active" : ""}`} aria-hidden={page !== "dinner"}>
-        <Header page="dinner" navigate={navigate} openInfo={() => setInfoOpen(true)} />
-        <div className="center-detail">
-          <ScreenTitle image="/assets/doodle-dinner.png" title="DINNER" />
-          <div className="notice-card">
-            <h2>Wedding Dinner</h2>
-            <p>예식 후 First Garden 연회장에서<br />따뜻한 저녁 식사가 준비됩니다.</p>
-            <hr />
-            <p>17:30 · Garden Hall</p>
-          </div>
-        </div>
-      </section>
-
-      <section className={`app-screen detail-screen thanks-screen ${page === "thanks" ? "active" : ""}`} aria-hidden={page !== "thanks"}>
-        <Header page="thanks" navigate={navigate} openInfo={() => setInfoOpen(true)} />
-        <div className="center-detail thanks-content">
-          <ScreenTitle image="/assets/doodle-thanks.png" title="THANKS TO" />
-          <div className="notice-card">
-            <h2>With love and gratitude</h2>
-            <p>저희의 시작을 축복해 주시는<br />모든 분께 진심으로 감사드립니다.</p>
-            <strong>다연 ♥ 재훈</strong>
-          </div>
-        </div>
-      </section>
-
-      {menuOpen && (
-        <div className="home-menu-backdrop" onMouseDown={(event) => event.target === event.currentTarget && setMenuOpen(false)}>
-          <section className="home-menu-panel glass-card" role="dialog" aria-modal="true" aria-label="전체 메뉴">
-            <GlassLayers />
-            <div className="home-menu-heading">
-              <div><small>wedding invitaion</small><strong>다연 ♥ 재훈</strong></div>
-              <button onClick={() => setMenuOpen(false)} aria-label="전체 메뉴 닫기"><span className="material-symbols-rounded" aria-hidden>close</span></button>
-            </div>
-            <div className="home-menu-grid">
-              {iconItems.map((item) => (
-                <button className="glass-card" key={item.page} onClick={() => navigate(item.page)}>
-                  <GlassLayers />
-                  <img className="glass-content" src={item.image} alt="" />
-                  <span className="glass-content">{item.label}</span>
-                </button>
-              ))}
-            </div>
-          </section>
-        </div>
-      )}
-
-      {infoOpen && (
-        <div className="info-backdrop" onMouseDown={(event) => event.target === event.currentTarget && setInfoOpen(false)}>
-          <section className="info-modal" role="dialog" aria-modal="true" aria-labelledby="info-modal-title">
-            <img className="info-float-icon" src="/assets/doodle-alert.png" alt="" />
-            <button className="info-close" onClick={() => setInfoOpen(false)} aria-label="팝업 닫기">
-              <img src="/assets/close-circle2-filled.svg" alt="" />
-            </button>
-            <div className="title-frame info-title-frame">
-              <img src="/assets/title-frame.png" alt="" />
-              <h2 id="info-modal-title">SAVE THE DATE</h2>
-            </div>
-            <div className="notice-card info-card">
-              <h2 className="event-date"><span>2027. 05. 15</span>{" "}<span>PM 06:30</span></h2>
-              <p>First Garden · Paju, Korea</p>
-              <hr />
-              <p>따뜻한 축복으로 함께해 주세요.</p>
-            </div>
-          </section>
-        </div>
-      )}
       </div>
+
+      {splashComplete && panel && (
+        <PanelDialog panel={panel} onClose={closePanel} suspended={photoIndex !== null}>
+          {panel === "alert" && <div className="notice-card info-card"><h3 className="event-date"><span>2027. 05. 15</span><span>PM 06:30</span></h3><p>First Garden · Paju, Korea</p><hr /><p>따뜻한 축복으로 함께해 주세요.</p></div>}
+          {panel === "dinner" && <div className="notice-card info-card"><h3>Wedding Dinner</h3><p>예식 후 First Garden 연회장에서<br />따뜻한 저녁 식사가 준비됩니다.</p><hr /><p>17:30 · Garden Hall</p></div>}
+          {panel === "story" && <div className="notice-card info-card story-copy"><h3>Two lives,<br />one beautiful beginning.</h3><p>소중한 분들과 함께 새로운 시작을 나누고 싶습니다.</p><strong>다연 <i>♥</i> 재훈</strong></div>}
+          {panel === "thanks" && <div className="notice-card info-card"><h3>With love and gratitude</h3><p>저희의 시작을 축복해 주시는<br />모든 분께 진심으로 감사드립니다.</p><strong>다연 ♥ 재훈</strong></div>}
+
+          {panel === "location" && <div className="sheet-location-content">
+            <div className="map-card map-preview">
+              <iframe className="map-preview-frame" src={mapPreviewUrl} title="First Garden 위치 지도" loading="lazy" />
+              <a className="map-preview-copy" href={naverMapUrl} target="_blank" rel="noreferrer" aria-label="네이버 지도에서 First Garden 위치 열기"><strong>First Garden</strong><span>경기도 파주시 탑삭골길 260</span><em>네이버 지도에서 보기 ↗</em></a>
+            </div>
+            <div className="location-copy"><h3>퍼스트가든, 해피가든</h3><p>경기도 파주시 탑삭골길 260</p><a href={naverDirectionsUrl} target="_blank" rel="noreferrer">자세히 <span aria-hidden>↗</span></a></div>
+          </div>}
+
+          {panel === "gallery" && <div className="sheet-gallery-content">
+            <div className="gallery-tabs" aria-label="갤러리 분류">
+              {galleryTabs.map((tab) => <button key={tab.label} className={galleryTab === tab.label ? "active" : ""} onClick={() => setGalleryTab(tab.label)} aria-pressed={galleryTab === tab.label}><img src={tab.icon} alt="" />{tab.label}</button>)}
+            </div>
+            <div className={`gallery-grid tab-${galleryTab.toLowerCase()}`}>
+              {galleryImages.map((src, index) => <button className={`gallery-photo photo-${index + 1}`} key={index} onClick={() => openPhoto(index)} aria-label={`웨딩 사진 ${index + 1} 크게 보기`}><img src={src} alt={`${galleryTab} 웨딩 사진 ${index + 1}`} loading="lazy" /></button>)}
+            </div>
+          </div>}
+
+          {panel === "menu" && <div className="home-menu-grid">
+            {homeQuickLinks.map((item) => <button className="glass-card" key={item.page} onClick={() => openPanel(item.page as PanelKey)} aria-haspopup="dialog"><GlassLayers /><img className="glass-content" src={item.image} alt="" /><span className="glass-content">{item.label}</span></button>)}
+          </div>}
+        </PanelDialog>
+      )}
+      {photoIndex !== null && <PhotoViewer index={photoIndex} onClose={closePhoto} onChange={changePhoto} returnFocus={photoOpenerRef.current} />}
     </main>
   );
 }
