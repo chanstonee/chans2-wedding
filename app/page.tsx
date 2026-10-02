@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState, type PointerEventHandler, type ReactNode } from "react";
+import Guestbook from "./components/Guestbook";
 
-type PageKey = "home" | "story" | "location" | "alert" | "gallery" | "dinner" | "thanks";
+type PageKey = "home" | "story" | "location" | "alert" | "gallery" | "guestbook" | "dinner" | "thanks";
 type PanelKey = Exclude<PageKey, "home"> | "menu";
 type SplashStep = 1 | 2 | 3;
 
-const pageKeys: PageKey[] = ["home", "story", "location", "alert", "gallery", "dinner", "thanks"];
+const pageKeys: PageKey[] = ["home", "story", "location", "alert", "gallery", "guestbook", "dinner", "thanks"];
 const splashPassword = "20270515";
 
 const naverMapUrl = "https://naver.me/G6Rqydqw";
@@ -19,6 +20,7 @@ const homeQuickLinks: Array<{ label: string; image: string; page: PageKey; symbo
   { label: "식사", image: "/assets/doodle-dinner.png", page: "dinner", symbol: "restaurant" },
   { label: "두 사람의 이야기", image: "/assets/doodle-message.png", page: "story" },
   { label: "사진첩", image: "/assets/doodle-picture.png", page: "gallery" },
+  { label: "방명록", image: "/assets/doodle-invitation.png", page: "guestbook" },
   { label: "감사의 마음", image: "/assets/doodle-thanks.png", page: "thanks" },
 ];
 
@@ -44,10 +46,11 @@ const panelDetails: Record<PanelKey, { label: string; title: string; image?: str
   thanks: { label: "감사의 마음", title: "THANKS TO", image: "/assets/doodle-thanks.png" },
   location: { label: "오시는 길", title: "오시는 길" },
   gallery: { label: "사진첩", title: "사진첩" },
+  guestbook: { label: "방명록", title: "방명록" },
   menu: { label: "전체메뉴", title: "전체메뉴" },
 };
 
-const focusableSelector = 'button:not([disabled]), a[href], input:not([disabled]), iframe, [tabindex]:not([tabindex="-1"])';
+const focusableSelector = 'button:not([disabled]), a[href], input:not([disabled]), textarea:not([disabled]), select:not([disabled]), iframe, [tabindex]:not([tabindex="-1"])';
 
 function trapDialogFocus(event: KeyboardEvent, dialog: HTMLElement) {
   if (event.key !== "Tab") return;
@@ -68,7 +71,7 @@ function PanelDialog({ panel, onClose, suspended, children }: { panel: PanelKey;
   const dragStart = useRef<number | null>(null);
   const [dragOffset, setDragOffset] = useState(0);
   const [dragging, setDragging] = useState(false);
-  const isSheet = panel === "location" || panel === "gallery" || panel === "menu";
+  const isSheet = panel === "location" || panel === "gallery" || panel === "guestbook" || panel === "menu";
   const details = panelDetails[panel];
 
   useEffect(() => { setDragOffset(0); closeRef.current?.focus({ preventScroll: true }); }, [panel]);
@@ -428,6 +431,8 @@ export default function Home() {
               {galleryImages.map((src, index) => <button className={`gallery-photo photo-${index + 1}`} key={index} onClick={() => openPhoto(index)} aria-label={`웨딩 사진 ${index + 1} 크게 보기`}><img src={src} alt={`${galleryTab} 웨딩 사진 ${index + 1}`} loading="lazy" /></button>)}
             </div>
           </div>}
+
+          {panel === "guestbook" && <Guestbook />}
 
           {panel === "menu" && <div className="home-menu-grid">
             {homeQuickLinks.map((item) => <button className="glass-card" key={item.page} onClick={() => openPanel(item.page as PanelKey)} aria-haspopup="dialog"><GlassLayers /><img className="glass-content" src={item.image} alt="" /><span className="glass-content">{item.label}</span></button>)}
