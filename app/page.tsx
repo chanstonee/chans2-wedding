@@ -3,11 +3,11 @@
 import { useEffect, useRef, useState, type PointerEventHandler, type ReactNode } from "react";
 import Guestbook from "./components/Guestbook";
 
-type PageKey = "home" | "story" | "location" | "alert" | "gallery" | "guestbook" | "dinner" | "thanks";
+type PageKey = "home" | "story" | "location" | "alert" | "gallery" | "guestbook" | "dinner";
 type PanelKey = Exclude<PageKey, "home"> | "menu";
 type SplashStep = 1 | 2 | 3;
 
-const pageKeys: PageKey[] = ["home", "story", "location", "alert", "gallery", "guestbook", "dinner", "thanks"];
+const pageKeys: PageKey[] = ["home", "story", "location", "alert", "gallery", "guestbook", "dinner"];
 const splashPassword = "20270515";
 
 const naverMapUrl = "https://naver.me/G6Rqydqw";
@@ -20,8 +20,7 @@ const homeQuickLinks: Array<{ label: string; image: string; page: PageKey; symbo
   { label: "식사", image: "/assets/doodle-dinner.png", page: "dinner", symbol: "restaurant" },
   { label: "두 사람의 이야기", image: "/assets/doodle-message.png", page: "story" },
   { label: "사진첩", image: "/assets/doodle-picture.png", page: "gallery" },
-  { label: "방명록", image: "/assets/doodle-invitation.png", page: "guestbook" },
-  { label: "감사의 마음", image: "/assets/doodle-thanks.png", page: "thanks" },
+  { label: "방명록", image: "/assets/doodle-thanks.png", page: "guestbook" },
 ];
 
 const galleryImages = [
@@ -43,7 +42,6 @@ const panelDetails: Record<PanelKey, { label: string; title: string; image?: str
   alert: { label: "예식 날짜", title: "SAVE THE DATE", image: "/assets/doodle-alert.png" },
   dinner: { label: "식사 안내", title: "DINNER", image: "/assets/doodle-dinner.png" },
   story: { label: "두 사람의 이야기", title: "OUR STORY", image: "/assets/doodle-message.png" },
-  thanks: { label: "감사의 마음", title: "THANKS TO", image: "/assets/doodle-thanks.png" },
   location: { label: "오시는 길", title: "오시는 길" },
   gallery: { label: "사진첩", title: "사진첩" },
   guestbook: { label: "방명록", title: "방명록" },
@@ -413,7 +411,6 @@ export default function Home() {
           {panel === "alert" && <div className="notice-card info-card"><h3 className="event-date"><span>2027. 05. 15</span><span>PM 06:30</span></h3><p>First Garden · Paju, Korea</p><hr /><p>따뜻한 축복으로 함께해 주세요.</p></div>}
           {panel === "dinner" && <div className="notice-card info-card"><h3>Wedding Dinner</h3><p>예식 후 First Garden 연회장에서<br />따뜻한 저녁 식사가 준비됩니다.</p><hr /><p>17:30 · Garden Hall</p></div>}
           {panel === "story" && <div className="notice-card info-card story-copy"><h3>Two lives,<br />one beautiful beginning.</h3><p>소중한 분들과 함께 새로운 시작을 나누고 싶습니다.</p><strong>다연 <i>♥</i> 재훈</strong></div>}
-          {panel === "thanks" && <div className="notice-card info-card"><h3>With love and gratitude</h3><p>저희의 시작을 축복해 주시는<br />모든 분께 진심으로 감사드립니다.</p><strong>다연 ♥ 재훈</strong></div>}
 
           {panel === "location" && <div className="sheet-location-content">
             <div className="map-card map-preview">

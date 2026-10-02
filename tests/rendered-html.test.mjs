@@ -10,9 +10,9 @@ test("exports the invitation and guestbook entry point for GitHub Pages", async 
   assert.match(html, /<html[^>]*lang="ko"/);
   assert.match(html, /방명록/);
   assert.match(html, /사진첩/);
-  assert.match(html, /감사의 마음/);
+  assert.doesNotMatch(html, /감사의 마음/);
   assert.ok(html.includes(`${basePath}/_next/`));
-  assert.ok(html.includes(`${basePath}/assets/doodle-invitation.png`));
+  assert.ok(html.includes(`${basePath}/assets/doodle-thanks.png`));
   assert.doesNotMatch(html, /관리자 이메일|인증 메일 보내기/);
   await access(new URL(".nojekyll", output));
 });
