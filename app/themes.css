@@ -1,0 +1,116 @@
+/* Selected blue/mint theme. Original blush styles remain in globals.css. */
+.app-shell[data-theme="blue-mint"] {
+  --ink:#1f355a;
+  --blue:#405a7d;
+  --blush:#dce4fb;
+  --ivory:#edf6f6;
+  --theme-background:url("/assets/themes/blue-mint/background.png");
+  --theme-muted:#4b6488;
+  --theme-accent:#7897ec;
+  --theme-border:rgba(137,166,204,.38);
+  color:var(--ink);
+  background:#b6dce4 var(--theme-background) center/cover no-repeat;
+}
+.app-shell[data-theme="blue-mint"] .home-screen {
+  background:#b6dce4 var(--theme-background) center/cover no-repeat;
+}
+.app-shell[data-theme="blue-mint"] .home-header.glass-card {
+  --glass-fill:rgba(231,243,255,.48);
+  border:1px solid rgba(255,255,255,.6);
+  border-top:0;
+  border-radius:0 0 18px 18px;
+  color:#334f7c;
+}
+.app-shell[data-theme="blue-mint"] .home-menu-trigger { color:#365582; }
+.app-shell[data-theme="blue-mint"] .home-hero>p { color:#47618b; }
+.app-shell[data-theme="blue-mint"] .home-hero h1 { color:#162e56; }
+.app-shell[data-theme="blue-mint"] .home-hero h1 i { color:#849cff; font-variation-settings:"FILL" 0; }
+.app-shell[data-theme="blue-mint"] .home-hero>span { color:var(--theme-muted); }
+.app-shell[data-theme="blue-mint"] .home-hero-art .hero-couple { filter:none; }
+.app-shell[data-theme="blue-mint"] .home-quick-card.glass-card {
+  --glass-fill:rgba(247,250,255,.66);
+  border-color:rgba(255,255,255,.9);
+  box-shadow:0 8px 24px rgba(68,106,147,.06),inset 0 1px 0 rgba(255,255,255,.72);
+}
+.app-shell[data-theme="blue-mint"] .home-quick-label { color:#2b426d; }
+.app-shell[data-theme="blue-mint"] .home-quick-label .material-symbols-rounded { color:var(--theme-accent); }
+.app-shell[data-theme="blue-mint"] .home-bottom-nav.glass-card {
+  --glass-fill:rgba(243,250,255,.67);
+  border-color:rgba(255,255,255,.88);
+  box-shadow:0 10px 30px rgba(47,83,119,.09),inset 0 1px 0 rgba(255,255,255,.9);
+}
+.app-shell[data-theme="blue-mint"] .home-bottom-nav button,
+.app-shell[data-theme="blue-mint"] .home-bottom-nav button>.material-symbols-rounded { color:#354d79; }
+.home-bottom-nav button:focus-visible { outline:2px solid currentColor; outline-offset:-2px; }
+.app-shell[data-theme="blue-mint"] .glass-filter { filter:url(#glass-distortion) saturate(1.02) brightness(1.03); }
+.app-shell[data-theme="blue-mint"] .panel-backdrop { background:rgba(22,43,71,.4); }
+.app-shell[data-theme="blue-mint"] .info-modal,
+.app-shell[data-theme="blue-mint"] .sheet-dialog {
+  background:#d6eaf1 var(--theme-background) center/cover no-repeat;
+  border-color:rgba(255,255,255,.8);
+  box-shadow:0 24px 80px rgba(28,54,91,.22);
+}
+.app-shell[data-theme="blue-mint"] .sheet-heading { background:rgba(239,248,255,.7); border-color:rgba(117,146,185,.2); }
+.app-shell[data-theme="blue-mint"] .sheet-handle { background:rgba(53,83,125,.32); }
+.app-shell[data-theme="blue-mint"] .home-menu-grid button.glass-card { --glass-fill:rgba(246,252,255,.6); border-color:rgba(255,255,255,.8); }
+.app-shell[data-theme="blue-mint"] .notice-card,
+.app-shell[data-theme="blue-mint"] .info-card { background:rgba(248,252,255,.78); box-shadow:none; }
+.app-shell[data-theme="blue-mint"] .notice-card hr { background:#a3bad7; }
+.app-shell[data-theme="blue-mint"] .title-frame>img { object-fit:contain; }
+.app-shell[data-theme="blue-mint"] .story-copy p,
+.app-shell[data-theme="blue-mint"] .location-copy p { color:var(--theme-muted); }
+.app-shell[data-theme="blue-mint"] .story-copy i { color:#849cff; }
+.app-shell[data-theme="blue-mint"] .location-copy,
+.app-shell[data-theme="blue-mint"] .map-preview-copy { color:var(--ink); }
+.app-shell[data-theme="blue-mint"] .map-preview,
+.app-shell[data-theme="blue-mint"] .map-preview-frame { background:#daeaf0; }
+.app-shell[data-theme="blue-mint"] .map-preview-copy { background:rgba(247,252,255,.92); box-shadow:0 10px 28px rgba(40,72,109,.12); }
+.app-shell[data-theme="blue-mint"] .map-preview-copy span,
+.app-shell[data-theme="blue-mint"] .map-preview-copy em { color:var(--theme-muted); }
+.app-shell[data-theme="blue-mint"] .sheet-location-content .location-copy a { background:#f4f9ff; border-color:var(--theme-border); }
+.app-shell[data-theme="blue-mint"] .gallery-tabs { background:#e8f1f9; border-color:#abc1d9; box-shadow:inset 0 -1px 1px rgba(43,76,112,.12); }
+.app-shell[data-theme="blue-mint"] .gallery-tabs button { background:#f2f8fc; border-color:#c9d7ea; }
+.app-shell[data-theme="blue-mint"] .gallery-tabs button.active { background:#dce4fb; }
+.app-shell[data-theme="blue-mint"] .gallery-photo { background:rgba(245,251,255,.68); border-color:#c4d8e6; box-shadow:inset 0 0 0 3px rgba(232,242,249,.85); }
+.app-shell[data-theme="blue-mint"] .gallery-photo:hover { border-color:#90a9d4; }
+.app-shell[data-theme="blue-mint"] .photo-viewer { background:rgba(19,32,52,.97); }
+.app-shell[data-theme="blue-mint"] :is(.panel-close,.info-close,.home-quick-card,.gallery-photo,.home-menu-grid button):focus-visible { outline:2px solid #4a699b; outline-offset:2px; }
+
+/* Guestbook controls and states inherit the selected invitation theme. */
+.app-shell[data-theme="blue-mint"] .guestbook-heart { color:#7897dd; }
+.app-shell[data-theme="blue-mint"] :is(.guestbook-intro p,.guestbook-character-count,.guestbook-secret small,.guestbook-entry time,.guestbook-locked,.guestbook-empty) { color:var(--theme-muted); }
+.app-shell[data-theme="blue-mint"] .guestbook-intro strong { color:var(--ink); }
+.app-shell[data-theme="blue-mint"] :is(.guestbook-form,.guestbook-entry) { background:rgba(247,252,255,.85); border-color:#c4d5e7; }
+.app-shell[data-theme="blue-mint"] :is(.guestbook-form input:not([type="checkbox"]),.guestbook-form textarea) { background:#fafdff; border-color:#b4c9e0; }
+.app-shell[data-theme="blue-mint"] :is(.guestbook-form input,.guestbook-form textarea)::placeholder { color:#7185a1; }
+.app-shell[data-theme="blue-mint"] .guestbook-secret input { accent-color:#5877b0; }
+.app-shell[data-theme="blue-mint"] .guestbook-primary { background:#506fa7; }
+.app-shell[data-theme="blue-mint"] .guestbook-primary:hover:not(:disabled) { background:#405e96; }
+.app-shell[data-theme="blue-mint"] .guestbook-secondary { background:#f3f8ff; border-color:#aec4df; color:#36517d; }
+.app-shell[data-theme="blue-mint"] .guestbook-text-button { color:#405e8b; }
+.app-shell[data-theme="blue-mint"] .guestbook-notice { background:#e7f1fb; color:#405c83; }
+.app-shell[data-theme="blue-mint"] :is(.guestbook-content button,.guestbook-form input,.guestbook-form textarea):focus-visible { outline:2px solid #5877b0; outline-offset:2px; }
+.app-shell[data-theme="blue-mint"] .splash-gate { background:#b6dce4; }
+.app-shell[data-theme="blue-mint"] .splash-gate::before { background:var(--theme-background) center/cover no-repeat; }
+.app-shell[data-theme="blue-mint"] :is(.splash-status,.splash-mark h1) { color:#365582; }
+.app-shell[data-theme="blue-mint"] .splash-password-form input { border-color:#96b4ed; box-shadow:0 0 0 2px #c4d6fb; color:#34517e; }
+.app-shell[data-theme="blue-mint"] .splash-password-form button { border-color:#638bd0; background:#7198de; }
+
+@media (min-width:701px) {
+  .app-shell[data-theme="blue-mint"] .home-hero-art { height:148px; }
+}
+
+@media (max-width:700px) {
+  .app-shell[data-theme="blue-mint"] .home-header.glass-card { height:64px; }
+  .app-shell[data-theme="blue-mint"] .home-hero { padding-top:23px; }
+  .app-shell[data-theme="blue-mint"] .home-hero>p { margin-bottom:13px; }
+  .app-shell[data-theme="blue-mint"] .home-hero h1 { font-size:42px; line-height:1.25; }
+  .app-shell[data-theme="blue-mint"] .home-hero>strong { margin-top:9px; font-size:18px; }
+  .app-shell[data-theme="blue-mint"] .home-hero>span { margin-top:8px; }
+  .app-shell[data-theme="blue-mint"] .home-hero-art { height:152px; margin:5px 0 7px; }
+  .app-shell[data-theme="blue-mint"] .home-hero-art .hero-couple { object-fit:cover; object-position:center 70%; }
+  .app-shell[data-theme="blue-mint"] .home-quick-grid { gap:12px; padding:4px 0 20px; }
+  .app-shell[data-theme="blue-mint"] .home-quick-card { min-height:130px; padding:11px 4px 12px; border-radius:27px; }
+  .app-shell[data-theme="blue-mint"] .home-secondary-card .home-quick-art { height:82px; }
+  .app-shell[data-theme="blue-mint"] .home-secondary-card .home-quick-label { font-weight:600; }
+}

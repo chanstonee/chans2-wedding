@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type PointerEventHandler, type ReactNode } from "react";
 import Guestbook from "./components/Guestbook";
+import { defaultTheme, themeAsset, themeLabels, themeStorageKey, type InvitationTheme } from "./lib/themes";
 
 type PageKey = "home" | "story" | "location" | "alert" | "gallery" | "guestbook" | "dinner";
 type PanelKey = Exclude<PageKey, "home"> | "menu";
@@ -63,7 +64,7 @@ function trapDialogFocus(event: KeyboardEvent, dialog: HTMLElement) {
   }
 }
 
-function PanelDialog({ panel, onClose, suspended, children }: { panel: PanelKey; onClose: () => void; suspended: boolean; children: ReactNode }) {
+function PanelDialog({ panel, theme, onClose, suspended, children }: { panel: PanelKey; theme: InvitationTheme; onClose: () => void; suspended: boolean; children: ReactNode }) {
   const dialogRef = useRef<HTMLElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   const dragStart = useRef<number | null>(null);
@@ -111,12 +112,12 @@ function PanelDialog({ panel, onClose, suspended, children }: { panel: PanelKey;
           </div>
         ) : (
           <>
-            <img className="info-float-icon" src={details.image} alt="" />
+            <img className="info-float-icon" src={themeAsset(details.image, theme)} alt="" />
             <button ref={closeRef} className="info-close" onClick={onClose} aria-label={`${details.label} 닫기`}><img src="/assets/close-circle2-filled.svg" alt="" /></button>
           </>
         )}
         <div className="panel-scroll">
-          {!isSheet && <div className="title-frame info-title-frame"><img src="/assets/title-frame.png" alt="" /><h2 id="panel-title">{details.title}</h2></div>}
+          {!isSheet && <div className="title-frame info-title-frame"><img src={themeAsset("/assets/title-frame.png", theme)} alt="" /><h2 id="panel-title">{details.title}</h2></div>}
           {children}
         </div>
       </section>
@@ -163,28 +164,28 @@ function GlassLayers() {
   );
 }
 
-function SplashGate({ step, password, onEnter }: { step: SplashStep; password: string; onEnter: () => void }) {
+function SplashGate({ step, password, theme, onEnter }: { step: SplashStep; password: string; theme: InvitationTheme; onEnter: () => void }) {
   const passwordReady = password === splashPassword;
 
   return (
     <section className={`splash-gate splash-step-${step}`} aria-label="웨딩 초대장 시작 화면">
       <picture className="splash-horse" aria-hidden>
-        <source media="(max-width: 700px)" srcSet="/assets/doodle-message.png" />
-        <img src="/assets/doodle-message.png" alt="" />
+        <source media="(max-width: 700px)" srcSet={themeAsset("/assets/doodle-message.png", theme)} />
+        <img src={themeAsset("/assets/doodle-message.png", theme)} alt="" />
       </picture>
 
       <div className={`splash-stage splash-status ${step === 1 ? "is-active" : ""}`} role="status" aria-hidden={step !== 1}>
-        <img className="splash-loader" src="/assets/splash-loader.svg" alt="" />
+        <img className="splash-loader" src={themeAsset("/assets/splash-loader.svg", theme)} alt="" />
       </div>
 
       <div className={`splash-stage splash-status ${step === 2 ? "is-active" : ""}`} role="status" aria-live="polite" aria-hidden={step !== 2}>
-        <img className="splash-loader" src="/assets/splash-loader.svg" alt="" />
+        <img className="splash-loader" src={themeAsset("/assets/splash-loader.svg", theme)} alt="" />
         <span>Welcome</span>
       </div>
 
       <div className={`splash-stage splash-entry ${step === 3 ? "is-active" : ""}`} aria-hidden={step !== 3}>
         <div className="splash-mark">
-          <img src="/assets/doodle-message.png" alt="" />
+          <img src={themeAsset("/assets/doodle-message.png", theme)} alt="" />
           <h1>wedding invitaion</h1>
         </div>
         <form className="splash-password-form" onSubmit={(event) => { event.preventDefault(); if (passwordReady) onEnter(); }}>
@@ -206,6 +207,7 @@ function SplashGate({ step, password, onEnter }: { step: SplashStep; password: s
 }
 
 export default function Home() {
+  const [theme, setTheme] = useState<InvitationTheme>(defaultTheme);
   const [panel, setPanel] = useState<PanelKey | null>(null);
   const [galleryTab, setGalleryTab] = useState("Ceremony");
   const [photoIndex, setPhotoIndex] = useState<number | null>(null);
@@ -216,6 +218,28 @@ export default function Home() {
   const openerRef = useRef<HTMLElement | null>(null);
   const photoOpenerRef = useRef<HTMLElement | null>(null);
   const homeScrollRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem(themeStorageKey);
+      // Restore the visitor's preference after the static page hydrates.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      if (saved === "blush" || saved === "blue-mint") setTheme(saved);
+    } catch { /* Theme switching also works when browser storage is unavailable. */ }
+  }, []);
+
+  useEffect(() => {
+    const meta = document.querySelector('meta[name="theme-color"]');
+    const previous = meta?.getAttribute("content");
+    meta?.setAttribute("content", theme === "blue-mint" ? "#9bc7e1" : "#fae4df");
+    return () => { if (previous) meta?.setAttribute("content", previous); };
+  }, [theme]);
+
+  const cycleTheme = () => {
+    const nextTheme: InvitationTheme = theme === "blue-mint" ? "blush" : "blue-mint";
+    setTheme(nextTheme);
+    try { window.localStorage.setItem(themeStorageKey, nextTheme); } catch { /* Optional preference storage. */ }
+  };
 
   const resetGlassPointer = () => {
     activeGlassRef.current?.style.removeProperty("--glass-x");
@@ -348,7 +372,7 @@ export default function Home() {
   };
 
   return (
-    <main className="app-shell" onPointerMove={handleGlassPointerMove} onPointerLeave={resetGlassPointer}>
+    <main className="app-shell" data-theme={theme} onPointerMove={handleGlassPointerMove} onPointerLeave={resetGlassPointer}>
       <svg className="glass-filter-definitions" aria-hidden="true" focusable="false">
         <defs>
           <filter id="glass-distortion" x="-10%" y="-10%" width="120%" height="120%">
@@ -357,12 +381,12 @@ export default function Home() {
           </filter>
         </defs>
       </svg>
-      {!splashComplete && <SplashGate step={splashStep} password={autoPassword} onEnter={enterSite} />}
+      {!splashComplete && <SplashGate step={splashStep} password={autoPassword} theme={theme} onEnter={enterSite} />}
       <div className="app-scenes" inert={!splashComplete || overlayOpen} aria-hidden={!splashComplete || overlayOpen}>
         <header className="home-header glass-card">
           <GlassLayers />
           <button className="home-logo glass-content" onClick={() => openPanel("story")} aria-label="우리 이야기 보기" aria-haspopup="dialog">
-            <img src="/assets/doodle-message.png" alt="" />
+            <img src={themeAsset("/assets/doodle-message.png", theme)} alt="" />
           </button>
           <span className="home-header-title glass-content">wedding invitaion</span>
           <button className="home-menu-trigger glass-content" onClick={() => openPanel("menu")} aria-label="전체 메뉴 열기" aria-haspopup="dialog" aria-expanded={panel === "menu"}>
@@ -377,7 +401,7 @@ export default function Home() {
             <strong>2027. 05. 15 · PM 06:30</strong>
             <span>퍼스트가든, 해피가든</span>
             <div className="home-hero-art" aria-hidden>
-              <img className="hero-couple" src="/assets/doodle-couple.png" alt="" />
+              <img className="hero-couple" src={themeAsset("/assets/doodle-couple-main.png", theme)} alt="" />
             </div>
           </section>
 
@@ -386,7 +410,7 @@ export default function Home() {
               <button key={item.page} className={`home-quick-card glass-card ${index > 2 ? "home-secondary-card" : ""}`} onClick={() => openPanel(item.page as PanelKey)} aria-haspopup="dialog">
                 <GlassLayers />
                 <span className="home-quick-art glass-content">
-                  <img className="glass-content" src={item.image} alt="" />
+                  <img className="glass-content" src={themeAsset(item.image, theme)} alt="" />
                 </span>
                 <span className="home-quick-label glass-content">{item.symbol && <span className="material-symbols-rounded" aria-hidden>{item.symbol}</span>}{item.label}</span>
               </button>
@@ -401,13 +425,13 @@ export default function Home() {
           <GlassLayers />
           <button className="glass-content" onClick={() => openPanel("alert")} aria-haspopup="dialog"><span className="material-symbols-rounded" aria-hidden>mail</span><span>RSVP</span></button>
           <button className="glass-content" onClick={() => openPanel("menu")} aria-haspopup="dialog"><span className="material-symbols-rounded" aria-hidden>grid_view</span><span>전체메뉴</span></button>
-          <button className="glass-content" onClick={() => openPanel("alert")} aria-haspopup="dialog"><span className="material-symbols-rounded" aria-hidden>info</span><span>안내</span></button>
+          <button className="glass-content theme-toggle" onClick={cycleTheme} aria-label={`테마 변경, 현재 ${themeLabels[theme]}`} aria-pressed={theme === "blue-mint"} title={`현재 ${themeLabels[theme]} · 눌러서 테마 변경`}><span className="material-symbols-rounded" aria-hidden>contrast</span><span>테마</span></button>
         </nav>
 
       </div>
 
       {splashComplete && panel && (
-        <PanelDialog panel={panel} onClose={closePanel} suspended={photoIndex !== null}>
+        <PanelDialog panel={panel} theme={theme} onClose={closePanel} suspended={photoIndex !== null}>
           {panel === "alert" && <div className="notice-card info-card"><h3 className="event-date"><span>2027. 05. 15</span><span>PM 06:30</span></h3><p>First Garden · Paju, Korea</p><hr /><p>따뜻한 축복으로 함께해 주세요.</p></div>}
           {panel === "dinner" && <div className="notice-card info-card"><h3>Wedding Dinner</h3><p>예식 후 First Garden 연회장에서<br />따뜻한 저녁 식사가 준비됩니다.</p><hr /><p>17:30 · Garden Hall</p></div>}
           {panel === "story" && <div className="notice-card info-card story-copy"><h3>Two lives,<br />one beautiful beginning.</h3><p>소중한 분들과 함께 새로운 시작을 나누고 싶습니다.</p><strong>다연 <i>♥</i> 재훈</strong></div>}
@@ -422,7 +446,7 @@ export default function Home() {
 
           {panel === "gallery" && <div className="sheet-gallery-content">
             <div className="gallery-tabs" aria-label="갤러리 분류">
-              {galleryTabs.map((tab) => <button key={tab.label} className={galleryTab === tab.label ? "active" : ""} onClick={() => setGalleryTab(tab.label)} aria-pressed={galleryTab === tab.label}><img src={tab.icon} alt="" />{tab.label}</button>)}
+              {galleryTabs.map((tab) => <button key={tab.label} className={galleryTab === tab.label ? "active" : ""} onClick={() => setGalleryTab(tab.label)} aria-pressed={galleryTab === tab.label}><img src={themeAsset(tab.icon, theme)} alt="" />{tab.label}</button>)}
             </div>
             <div className={`gallery-grid tab-${galleryTab.toLowerCase()}`}>
               {galleryImages.map((src, index) => <button className={`gallery-photo photo-${index + 1}`} key={index} onClick={() => openPhoto(index)} aria-label={`웨딩 사진 ${index + 1} 크게 보기`}><img src={src} alt={`${galleryTab} 웨딩 사진 ${index + 1}`} loading="lazy" /></button>)}
@@ -432,7 +456,7 @@ export default function Home() {
           {panel === "guestbook" && <Guestbook />}
 
           {panel === "menu" && <div className="home-menu-grid">
-            {homeQuickLinks.map((item) => <button className="glass-card" key={item.page} onClick={() => openPanel(item.page as PanelKey)} aria-haspopup="dialog"><GlassLayers /><img className="glass-content" src={item.image} alt="" /><span className="glass-content">{item.label}</span></button>)}
+            {homeQuickLinks.map((item) => <button className="glass-card" key={item.page} onClick={() => openPanel(item.page as PanelKey)} aria-haspopup="dialog"><GlassLayers /><img className="glass-content" src={themeAsset(item.image, theme)} alt="" /><span className="glass-content">{item.label}</span></button>)}
           </div>}
         </PanelDialog>
       )}

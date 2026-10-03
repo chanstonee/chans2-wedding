@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./themes.css";
 
 const publicBasePath = process.env.PAGES_BUILD === "1"
   ? (process.env.PAGES_BASE_PATH ?? "/wedding").replace(/\/$/, "")

@@ -78,6 +78,7 @@ img { display:block; max-width:100%; }
 .home-hero h1 .home-name-heart { display:inline-block; font-size:.65em; vertical-align:.04em; font-variation-settings:"FILL" 1; margin:0 .12em; }
 .home-hero-art { position:relative; width:100%; height:160px; margin:10px 0 4px; }
 .home-hero-art img { width:100%; height:100%; object-fit:contain; }
+.home-hero-art .hero-couple { filter:saturate(.9); }
 .hero-envelope { z-index:2; left:50%; bottom:0; width:min(360px,78%); transform:translateX(-50%); }
 .hero-dove { z-index:1; left:3%; top:10%; width:31%; transform:rotate(-8deg); }
 .hero-cherub { z-index:3; right:1%; top:1%; width:34%; transform:rotate(5deg); }
@@ -171,7 +172,7 @@ img { display:block; max-width:100%; }
 .info-modal { position:relative; width:min(560px,calc(100% - 48px)); padding:88px 26px 28px; overflow:visible; border-radius:32px; background:#fff8f5 url("/assets/doodle-bg.png") center bottom/cover no-repeat; box-shadow:0 24px 80px rgba(52,42,42,.2); animation:info-modal-in .3s cubic-bezier(.2,.75,.25,1) both; }
 .info-float-icon { position:absolute; z-index:2; top:-80px; left:50%; width:180px; height:180px; object-fit:contain; transform:translateX(-50%); animation:info-icon-float 3.8s ease-in-out infinite; filter:drop-shadow(0 8px 9px rgba(122,99,94,.08)); }
 .info-close { position:absolute; z-index:3; top:20px; right:20px; width:46px; height:46px; padding:0; border-radius:50%; background:transparent; cursor:pointer; }
-.info-close img { width:100%; height:100%; opacity:.88; }
+.info-close img { width:100%; height:100%; }
 .info-close:focus-visible { outline:2px solid #fff; outline-offset:3px; }
 .info-title-frame { width:100%; height:94px; margin:0 0 14px; }
 .info-title-frame h2 { position:relative; z-index:1; margin:0; color:var(--blue); font-size:var(--text-label); font-weight:700; line-height:var(--leading-label); letter-spacing:.06em; }
@@ -369,7 +370,7 @@ img { display:block; max-width:100%; }
 .photo-viewer button { position:absolute; display:grid; place-items:center; width:48px; height:48px; padding:0; border-radius:50%; background:rgba(255,255,255,.15); color:#fff; cursor:pointer; }
 .photo-viewer button:focus-visible { outline:2px solid #fff; outline-offset:3px; }
 .photo-viewer button .material-symbols-rounded { font-size:30px; }
-.photo-viewer-close { top:max(14px,env(safe-area-inset-top)); right:16px; }
+.photo-viewer .photo-viewer-close { top:max(14px,env(safe-area-inset-top)); right:16px; background:#fff; color:#777; }
 .photo-viewer-prev { left:12px; top:50%; transform:translateY(-50%); }
 .photo-viewer-next { right:12px; top:50%; transform:translateY(-50%); }
 .photo-viewer-count { position:absolute; left:50%; bottom:max(18px,env(safe-area-inset-bottom)); transform:translateX(-50%); color:#fff; font-size:14px; font-variant-numeric:tabular-nums; }
