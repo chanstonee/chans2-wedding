@@ -1,6 +1,6 @@
 export type InvitationTheme = "blush" | "blue-mint";
 
-export const defaultTheme: InvitationTheme = "blue-mint";
+export const defaultTheme: InvitationTheme = "blush";
 export const themeStorageKey = "wedding-theme";
 export const themeLabels: Record<InvitationTheme, string> = {
   blush: "블러시",
