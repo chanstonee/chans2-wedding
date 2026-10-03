@@ -57,3 +57,13 @@ The full-viewport fixed paper was replaced by absolute paper while retaining its
 This approach addresses a likely Safari color-retention path: [WebKit's fixed-edge sampling code](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/page/LocalFrameView.cpp) preserves existing colors for viewport-sized fixed containers, but directly reads the background color of smaller opaque edge candidates. It samples 4px inward and excludes direct colors on boxes at most 10px high. This is an implementation-based inference, not physical-device confirmation of this fix.
 
 Local checks at 430×774, 390×844, 320×640 and 1280×900 confirmed both endpoint colors/root/meta follow repeated theme switches, unchanged header/tagline/navigation positions, and zero root/body scroll offsets. Desktop edge strips remain hidden. Saved blue restoration and date-popup opening/closing passed. Build and all four existing tests passed. Evidence: outputs/safari-endpoints-local-checks.json and safari-endpoints-{blue,pink}-local.jpg. Native iPhone Safari expanded/collapsed toolbar rendering still requires device verification.
+
+## Floating menu bottom clearance (2026-10-03)
+
+The next physical iPhone screenshots confirmed both theme colors now switch correctly, but showed the floating menu touching the opaque Safari background edge. The menu's bottom offset and the edge height used the same safe-area/max(12px) value, leaving zero visible space and covering the menu's lower shadow.
+
+A shared mobile/touch-landscape variable now adds 16px above that edge. The home content's bottom padding adds the same 16px to preserve the final card's scroll clearance. Desktop spacing remains unchanged. The 100dvh frame, 100lvh wallpaper crop, header, cards, artwork and typography are retained.
+
+Local checks at 430×774, 390×700, 390×844 and 320×568 measured 16px menu-to-edge clearance in both themes; 1280×900 retained its original 12px navigation offset. At 320×568, keyboard scrolling to the end reached home scrollTop 225 while root/body offsets remained zero, with about 40px between the final card and menu. Date popup opening/closing returned correctly. Build and all four tests passed; independent read-only review found no blockers.
+
+Evidence: outputs/nav-clearance-local-checks.json and nav-clearance-scroll-checks.json. Final native Safari spacing on the user's physical iPhone has not been directly verified by this desktop browser.

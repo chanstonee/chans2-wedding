@@ -17,6 +17,8 @@ html[data-invitation-theme] body::before {
 }
 .browser-edge { display:none; }
 @media (max-width:700px), (max-height:700px) and (hover:none) and (pointer:coarse) {
+  /* Leave visible wallpaper between the floating menu and Safari's opaque edge. */
+  html[data-invitation-theme] { --home-nav-clearance:16px; }
   /* One scroll owner: the home screen. lvh paper must not enlarge the document. */
   html[data-invitation-theme],
   html[data-invitation-theme] body {
