@@ -1,4 +1,27 @@
 /* Themes share layout, typography and original artwork; only the palette changes. */
+/* Paint the full document, including the regions behind Safari's controls. */
+  html[data-invitation-theme] {
+    --page-fill:#fffaf7;
+    --page-texture:url("/assets/doodle-bg.png");
+    --page-background-position:center top;
+    background:var(--page-fill) var(--page-texture) var(--page-background-position)/cover no-repeat;
+  }
+  html[data-invitation-theme="blue-mint"] {
+    --page-fill:#b6dce4;
+    --page-texture:url("/assets/themes/blue-mint/background.png");
+    --page-background-position:center;
+  }
+  html[data-invitation-theme] body,
+  html[data-invitation-theme] body::before {
+    background:var(--page-fill) var(--page-texture) var(--page-background-position)/cover no-repeat;
+  }
+@media (max-width:700px) {
+  html[data-invitation-theme] .app-shell,
+  html[data-invitation-theme] .app-screen.home-screen {
+    background:transparent;
+  }
+}
+
 .app-shell[data-theme="blue-mint"] {
   --ink:#1f355a;
   --blue:#405a7d;

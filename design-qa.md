@@ -31,3 +31,17 @@ scripts/build-pages.mjs passed, including TypeScript and repository-prefix verif
 Independent read-only review confirmed the built /wedding asset selectors cover splash, logo, hero, cards, menu, popup frames and gallery tabs. Both color matrices preserve alpha (0 0 0 1 0) and introduce no spatial filter primitives. The separate blue SVG loader has the same geometry as its blush counterpart.
 
 The color matrix uses sRGB as described in the [SVG filter documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Element/feColorMatrix). Visual browser verification was performed in the Codex in-app browser; a separate physical iPhone Safari session was not available.
+
+## Safari page background extension (2026-10-03)
+
+The invitation now synchronizes its theme to the document root as well as the app. html/body and the mobile 100lvh paper layer use the same selected texture and fill. On mobile, the app and home screen are transparent so separate 100dvh and 100lvh background crops do not create a seam. The root background is also themed at wider widths.
+
+The manual viewport tag was replaced with Next's Viewport export. Both invitation and admin exports contain exactly one viewport tag with viewport-fit=cover and one theme-color tag. Theme-color follows the selected page fill for browsers that use it.
+
+The shared header and main content now respect top and horizontal safe-area insets. The existing bottom navigation inset remains. The mobile admin container also respects top/side insets because it shares the cover viewport. Theme cleanup restores root state on unmount.
+
+Local build and all four tests passed. Mobile DOM checks confirmed identical themed html/body/paper backgrounds, transparent app/home backgrounds, a single cover viewport, working saved-theme restoration and unchanged original illustration geometry. Desktop layout and popup opening/closing were checked. An independent read-only review confirmed CSS specificity and root cleanup.
+
+The actual iPhone Safari status-bar/address-bar compositing, expanded/collapsed toolbars, rotation and keyboard behavior are not verified by the desktop in-app browser. No iPhone simulator runtime is installed in this environment. The code and desktop viewport checks must not be described as physical iPhone visual verification.
+
+Evidence: outputs/safari-background-local-checks.json and safari-background-blue-430.jpg / safari-background-pink-430.jpg.

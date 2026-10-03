@@ -1,10 +1,17 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import "./themes.css";
 
 const publicBasePath = process.env.PAGES_BUILD === "1"
   ? (process.env.PAGES_BASE_PATH ?? "/wedding").replace(/\/$/, "")
   : "";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#fffaf7",
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.PAGES_BUILD === "1" ? "https://chanstonee.github.io" : "https://chans2.chanstones2.chatgpt.site"),
@@ -31,10 +38,6 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="ko">
-      <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-        <meta name="theme-color" content="#fae4df" />
-      </head>
       <body>{children}</body>
     </html>
   );

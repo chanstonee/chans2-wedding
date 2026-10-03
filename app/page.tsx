@@ -229,10 +229,17 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    const root = document.documentElement;
+    const previousTheme = root.getAttribute("data-invitation-theme");
     const meta = document.querySelector('meta[name="theme-color"]');
     const previous = meta?.getAttribute("content");
-    meta?.setAttribute("content", theme === "blue-mint" ? "#9bc7e1" : "#fae4df");
-    return () => { if (previous) meta?.setAttribute("content", previous); };
+    root.setAttribute("data-invitation-theme", theme);
+    meta?.setAttribute("content", theme === "blue-mint" ? "#b6dce4" : "#fffaf7");
+    return () => {
+      if (previousTheme === null) root.removeAttribute("data-invitation-theme");
+      else root.setAttribute("data-invitation-theme", previousTheme);
+      if (previous) meta?.setAttribute("content", previous);
+    };
   }, [theme]);
 
   const cycleTheme = () => {
