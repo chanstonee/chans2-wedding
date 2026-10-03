@@ -45,3 +45,15 @@ Local build and all four tests passed. Mobile DOM checks confirmed identical the
 The actual iPhone Safari status-bar/address-bar compositing, expanded/collapsed toolbars, rotation and keyboard behavior are not verified by the desktop in-app browser. No iPhone simulator runtime is installed in this environment. The code and desktop viewport checks must not be described as physical iPhone visual verification.
 
 Evidence: outputs/safari-background-local-checks.json and safari-background-blue-430.jpg / safari-background-pink-430.jpg.
+
+## Safari endpoint correction after physical-device feedback (2026-10-03)
+
+The user's subsequent iPhone screenshots showed the previous blue status-bar color remaining after switching to blush, and the lower blue strip using a flat cyan instead of the wallpaper's lower endpoint. The previous desktop checks did not verify that native Safari behavior.
+
+Each theme now has independent upper/lower colors, sampled as the median of the wallpaper's first/last 2.5% of rows: blush #fdf8f0 / #fdf9ee; blue-mint #88bdfd / #eef6f2. Two opaque, noninteractive fixed edge elements sit outside the app's stacking context. Their colors update in the same React commit as the app theme; root theme/meta updates run before paint. Their height is the larger of the safe-area inset and 12px, including short touch-screen landscape viewports.
+
+The full-viewport fixed paper was replaced by absolute paper while retaining its 100lvh background crop. The invitation root/body use 100dvh and hide overflow; the home screen remains the sole user-scrollable surface. This removes the extra outer scroll range caused by combining 100lvh document height with a 100dvh app. These rules require the invitation root attribute and do not lock the admin page.
+
+This approach addresses a likely Safari color-retention path: [WebKit's fixed-edge sampling code](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/page/LocalFrameView.cpp) preserves existing colors for viewport-sized fixed containers, but directly reads the background color of smaller opaque edge candidates. It samples 4px inward and excludes direct colors on boxes at most 10px high. This is an implementation-based inference, not physical-device confirmation of this fix.
+
+Local checks at 430×774, 390×844, 320×640 and 1280×900 confirmed both endpoint colors/root/meta follow repeated theme switches, unchanged header/tagline/navigation positions, and zero root/body scroll offsets. Desktop edge strips remain hidden. Saved blue restoration and date-popup opening/closing passed. Build and all four existing tests passed. Evidence: outputs/safari-endpoints-local-checks.json and safari-endpoints-{blue,pink}-local.jpg. Native iPhone Safari expanded/collapsed toolbar rendering still requires device verification.

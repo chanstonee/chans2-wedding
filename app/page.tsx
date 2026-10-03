@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState, type PointerEventHandler, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type PointerEventHandler, type ReactNode } from "react";
 import Guestbook from "./components/Guestbook";
-import { defaultTheme, themeAsset, themeLabels, themeStorageKey, type InvitationTheme } from "./lib/themes";
+import { defaultTheme, themeAsset, themeBrowserColors, themeLabels, themeStorageKey, type InvitationTheme } from "./lib/themes";
 
 type PageKey = "home" | "story" | "location" | "alert" | "gallery" | "guestbook" | "dinner";
 type PanelKey = Exclude<PageKey, "home"> | "menu";
@@ -228,13 +228,13 @@ export default function Home() {
     } catch { /* Theme switching also works when browser storage is unavailable. */ }
   }, []);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const root = document.documentElement;
     const previousTheme = root.getAttribute("data-invitation-theme");
     const meta = document.querySelector('meta[name="theme-color"]');
     const previous = meta?.getAttribute("content");
     root.setAttribute("data-invitation-theme", theme);
-    meta?.setAttribute("content", theme === "blue-mint" ? "#b6dce4" : "#fffaf7");
+    meta?.setAttribute("content", themeBrowserColors[theme].top);
     return () => {
       if (previousTheme === null) root.removeAttribute("data-invitation-theme");
       else root.setAttribute("data-invitation-theme", previousTheme);
@@ -379,6 +379,10 @@ export default function Home() {
   };
 
   return (
+    <>
+    {/* Separate opaque edges let Safari resample each endpoint on theme changes. */}
+    <div className="browser-edge browser-edge-top" aria-hidden="true" style={{ backgroundColor: themeBrowserColors[theme].top }} />
+    <div className="browser-edge browser-edge-bottom" aria-hidden="true" style={{ backgroundColor: themeBrowserColors[theme].bottom }} />
     <main className="app-shell" data-theme={theme} onPointerMove={handleGlassPointerMove} onPointerLeave={resetGlassPointer}>
       <svg className="glass-filter-definitions" aria-hidden="true" focusable="false">
         <defs>
@@ -484,5 +488,6 @@ export default function Home() {
       )}
       {photoIndex !== null && <PhotoViewer index={photoIndex} onClose={closePhoto} onChange={changePhoto} returnFocus={photoOpenerRef.current} />}
     </main>
+    </>
   );
 }

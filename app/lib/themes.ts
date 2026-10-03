@@ -7,6 +7,12 @@ export const themeLabels: Record<InvitationTheme, string> = {
   "blue-mint": "블루 민트",
 };
 
+// Median colors from the top/bottom 2.5% of each invitation wallpaper.
+export const themeBrowserColors: Record<InvitationTheme, { top: string; bottom: string }> = {
+  blush: { top: "#fdf8f0", bottom: "#fdf9ee" },
+  "blue-mint": { top: "#88bdfd", bottom: "#eef6f2" },
+};
+
 export function themeAsset(source: string | undefined, theme: InvitationTheme) {
   if (!source || theme === "blush") return source;
   const filename = source.slice(source.lastIndexOf("/") + 1);

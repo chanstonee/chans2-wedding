@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import "./themes.css";
+import { defaultTheme, themeBrowserColors } from "./lib/themes";
 
 const publicBasePath = process.env.PAGES_BUILD === "1"
   ? (process.env.PAGES_BASE_PATH ?? "/wedding").replace(/\/$/, "")
@@ -10,7 +11,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#fffaf7",
+  themeColor: themeBrowserColors[defaultTheme].top,
 };
 
 export const metadata: Metadata = {
