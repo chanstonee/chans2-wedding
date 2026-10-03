@@ -1,4 +1,4 @@
-/* Themes share layout and typography from globals.css; only the palette and artwork change. */
+/* Themes share layout, typography and original artwork; only the palette changes. */
 .app-shell[data-theme="blue-mint"] {
   --ink:#1f355a;
   --blue:#405a7d;
@@ -24,7 +24,6 @@
 .app-shell[data-theme="blue-mint"] .home-hero h1 { color:#162e56; }
 .app-shell[data-theme="blue-mint"] .home-hero h1 i { color:#849cff; }
 .app-shell[data-theme="blue-mint"] .home-hero>span { color:var(--theme-muted); }
-.app-shell[data-theme="blue-mint"] .home-hero-art .hero-couple { filter:none; }
 .app-shell[data-theme="blue-mint"] .home-quick-card.glass-card {
   --glass-fill:rgba(247,250,255,.66);
   border-color:rgba(255,255,255,.9);
@@ -93,23 +92,13 @@
 .app-shell[data-theme="blue-mint"] .splash-password-form input { border-color:#96b4ed; box-shadow:0 0 0 2px #c4d6fb; color:#34517e; }
 .app-shell[data-theme="blue-mint"] .splash-password-form button { border-color:#638bd0; background:#7198de; }
 
-/* Match the visible drawing bounds to blush, including transparent PNG margins. */
-.app-shell[data-theme="blue-mint"] img[src$="/doodle-alert.png"] { --art-scale-x:0.994850; --art-scale-y:0.998946; --art-offset-x:-0.155177%; --art-offset-y:-0.117895%; }
-.app-shell[data-theme="blue-mint"] img[src$="/doodle-calendar.png"] { --art-scale-x:0.933442; --art-scale-y:0.934686; --art-offset-x:0.134123%; --art-offset-y:-2.732377%; }
-.app-shell[data-theme="blue-mint"] img[src$="/doodle-call.png"] { --art-scale-x:0.959472; --art-scale-y:0.975630; --art-offset-x:0.326433%; --art-offset-y:-1.397385%; }
-.app-shell[data-theme="blue-mint"] img[src$="/doodle-check.png"] { --art-scale-x:0.930816; --art-scale-y:0.935752; --art-offset-x:-1.869565%; --art-offset-y:-1.108096%; }
-.app-shell[data-theme="blue-mint"] img[src$="/doodle-couple-main.png"] { --art-scale-x:0.978698; --art-scale-y:0.986322; --art-offset-x:0.071980%; --art-offset-y:-1.056377%; }
-.app-shell[data-theme="blue-mint"] img[src$="/doodle-dinner.png"] { --art-scale-x:0.994954; --art-scale-y:0.988166; --art-offset-x:-0.158484%; --art-offset-y:-0.228853%; }
-.app-shell[data-theme="blue-mint"] img[src$="/doodle-location.png"] { --art-scale-x:0.868652; --art-scale-y:0.874650; --art-offset-x:-0.675027%; --art-offset-y:-2.957447%; }
-.app-shell[data-theme="blue-mint"] img[src$="/doodle-message.png"] { --art-scale-x:0.962868; --art-scale-y:0.918146; --art-offset-x:-0.363374%; --art-offset-y:-1.787420%; }
-.app-shell[data-theme="blue-mint"] img[src$="/doodle-picture.png"] { --art-scale-x:0.970906; --art-scale-y:0.953351; --art-offset-x:0.256612%; --art-offset-y:-0.475311%; }
-.app-shell[data-theme="blue-mint"] img[src$="/doodle-thanks.png"] { --art-scale-x:1.008237; --art-scale-y:1.008206; --art-offset-x:-0.083029%; --art-offset-y:-0.065722%; }
-.app-shell[data-theme="blue-mint"] img[src$="/title-frame.png"] { --art-scale-x:0.998826; --art-scale-y:1.284821; --art-offset-x:-0.104714%; --art-offset-y:3.721550%; }
-.app-shell[data-theme="blue-mint"] img[src*="/themes/blue-mint/"]:not([src$="splash-loader.svg"]) {
-  scale:var(--art-scale-x,1) var(--art-scale-y,1);
-  translate:var(--art-offset-x,0%) var(--art-offset-y,0%);
+/* Recolor the shared PNGs without changing their padding, alpha or internal proportions. */
+.app-shell[data-theme="blue-mint"] img:is([src*="/assets/doodle-"],[src$="/title-frame.png"]) {
+  filter:url(#theme-blue-art);
 }
-/* Keep animated popup artwork centered after its existing translateX(-50%). */
-.app-shell[data-theme="blue-mint"] img.info-float-icon[src*="/themes/blue-mint/"] {
-  translate:calc(var(--art-offset-x,0%) + (var(--art-scale-x,1) - 1) * 50%) var(--art-offset-y,0%);
+.app-shell[data-theme="blue-mint"] .home-hero-art .hero-couple {
+  filter:url(#theme-blue-hero) saturate(.9);
+}
+.app-shell[data-theme="blue-mint"] img.info-float-icon {
+  filter:url(#theme-blue-art) drop-shadow(0 8px 9px rgba(122,99,94,.08));
 }

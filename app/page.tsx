@@ -375,6 +375,21 @@ export default function Home() {
     <main className="app-shell" data-theme={theme} onPointerMove={handleGlassPointerMove} onPointerLeave={resetGlassPointer}>
       <svg className="glass-filter-definitions" aria-hidden="true" focusable="false">
         <defs>
+          {/* Palette-only filters leave the original drawing and alpha untouched. */}
+          <filter id="theme-blue-art" x="0" y="0" width="100%" height="100%" colorInterpolationFilters="sRGB">
+            <feColorMatrix type="matrix" values="
+              0.268936 1.445890 -0.540179 0 -0.174647
+              -0.085986 1.033767 0.004613 0 0.047606
+              0.025925 -0.821340 1.404189 0 0.391226
+              0 0 0 1 0" />
+          </filter>
+          <filter id="theme-blue-hero" x="0" y="0" width="100%" height="100%" colorInterpolationFilters="sRGB">
+            <feColorMatrix type="matrix" values="
+              0.280616 2.334735 -1.574683 0 -0.040667
+              0.059949 0.805439 0.131224 0 0.003389
+              0.413646 -1.342473 1.905443 0 0.023384
+              0 0 0 1 0" />
+          </filter>
           <filter id="glass-distortion" x="-10%" y="-10%" width="120%" height="120%">
             <feTurbulence type="turbulence" baseFrequency="0.008" numOctaves="2" result="noise" />
             <feDisplacementMap id="glass-displacement-map" in="SourceGraphic" in2="noise" scale="8" />
