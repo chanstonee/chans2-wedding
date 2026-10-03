@@ -60,11 +60,16 @@ html[data-invitation-theme] body::before {
 .app-shell[data-theme="blue-mint"] .home-screen {
   background:#b6dce4 var(--theme-background) center/cover no-repeat;
 }
-.app-shell[data-theme="blue-mint"] .home-header.glass-card {
-  --glass-fill:rgba(231,243,255,.48);
-  border-color:rgba(255,255,255,.6);
+.app-shell[data-theme="blue-mint"] .home-header {
+  background:rgba(238,246,255,.14);
   color:#334f7c;
 }
+.app-shell[data-theme="blue-mint"] .home-header-control.glass-card {
+  --glass-fill:rgba(243,250,255,.5);
+  border-color:rgba(255,255,255,.86);
+  box-shadow:0 4px 14px rgba(47,83,119,.08),inset 0 1px 0 rgba(255,255,255,.82);
+}
+.app-shell[data-theme="blue-mint"] .home-header-control:hover { --glass-fill:rgba(243,250,255,.68); }
 .app-shell[data-theme="blue-mint"] .home-menu-trigger { color:#365582; }
 .app-shell[data-theme="blue-mint"] .home-hero>p { color:#47618b; }
 .app-shell[data-theme="blue-mint"] .home-hero h1 { color:#162e56; }

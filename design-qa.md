@@ -67,3 +67,13 @@ A shared mobile/touch-landscape variable now adds 16px above that edge. The home
 Local checks at 430×774, 390×700, 390×844 and 320×568 measured 16px menu-to-edge clearance in both themes; 1280×900 retained its original 12px navigation offset. At 320×568, keyboard scrolling to the end reached home scrollTop 225 while root/body offsets remained zero, with about 40px between the final card and menu. Date popup opening/closing returned correctly. Build and all four tests passed; independent read-only review found no blockers.
 
 Evidence: outputs/nav-clearance-local-checks.json and nav-clearance-scroll-checks.json. Final native Safari spacing on the user's physical iPhone has not been directly verified by this desktop browser.
+
+## Translucent header and centered title (2026-10-03)
+
+The header now uses a quiet translucent fill and blur. Glass reflection/distortion layers belong only to the two circular icon controls. Original logo and menu artwork dimensions are retained: 46px/32px on mobile and 58px/38px on desktop. Mobile circles are 40px with 48px hit areas; their top edge clears the existing 12px browser-color strip.
+
+The title is explicitly centered on both axes of the header. Checks at 430×774, 390×844, 320×640 and 1280×900 measured zero title-center offset and equal left/right control clearance in both themes. Hero, card grid, floating navigation and scroll geometry at 430×774 are identical to the previous deployment.
+
+Local screenshots were inspected in both themes. Full-menu and story opening/closing, focus restoration and browser logs passed. Build and all four existing tests passed. Independent read-only review confirmed CSS specificity, 48px hit areas, artwork containment, safe-area behavior and retained accessibility attributes.
+
+Evidence: outputs/header-local-checks.json, header-pink-local.jpg and header-blue-local.jpg. Physical iPhone Safari rendering of this header change has not been directly verified.

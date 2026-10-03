@@ -409,14 +409,15 @@ export default function Home() {
       </svg>
       {!splashComplete && <SplashGate step={splashStep} password={autoPassword} theme={theme} onEnter={enterSite} />}
       <div className="app-scenes" inert={!splashComplete || overlayOpen} aria-hidden={!splashComplete || overlayOpen}>
-        <header className="home-header glass-card">
-          <GlassLayers />
-          <button className="home-logo glass-content" onClick={() => openPanel("story")} aria-label="우리 이야기 보기" aria-haspopup="dialog">
-            <img src={themeAsset("/assets/doodle-message.png", theme)} alt="" />
+        <header className="home-header">
+          <button className="home-logo home-header-control glass-card" onClick={() => openPanel("story")} aria-label="우리 이야기 보기" aria-haspopup="dialog">
+            <GlassLayers />
+            <img className="glass-content" src={themeAsset("/assets/doodle-message.png", theme)} alt="" />
           </button>
-          <span className="home-header-title glass-content">wedding invitaion</span>
-          <button className="home-menu-trigger glass-content" onClick={() => openPanel("menu")} aria-label="전체 메뉴 열기" aria-haspopup="dialog" aria-expanded={panel === "menu"}>
-            <span className="material-symbols-rounded" aria-hidden>menu</span>
+          <span className="home-header-title">wedding invitaion</span>
+          <button className="home-menu-trigger home-header-control glass-card" onClick={() => openPanel("menu")} aria-label="전체 메뉴 열기" aria-haspopup="dialog" aria-expanded={panel === "menu"}>
+            <GlassLayers />
+            <span className="material-symbols-rounded glass-content" aria-hidden>menu</span>
           </button>
         </header>
       <section ref={homeScrollRef} className="app-screen home-screen active">
